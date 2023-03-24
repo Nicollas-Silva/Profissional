@@ -1,0 +1,55 @@
+var spreadsheet = SpreadsheetApp.getActive();
+function PassaHoje() {
+
+  #var l é responsavel por trocar a coluna na aba de entrada de informações
+  var l = 0;
+  
+  #var m é responsavel para ser uma trava para o código nn continuar a se repetir após pegar os proximos 6 dias seguintes do dia atual
+  var m = 1;
+  
+  #var trava é responsavel por permitir q msm os dias q tem o fundo branco os proximos 6 dps do dia atual
+  #(ficaria mais facil se alterasse o fundo de todas as datas que devessem ter suas informações passadas de uma aba para a outra) 
+  var trava = 'TRUE';
+  #loop para achar o dia atual
+  for(i = 2; i < 62; i = i+2){
+    if(spreadsheet.getRange('Jean Mês!A'+i).getBackground() == "#ffffff" && trava == 'TRUE'){
+      continue
+    }
+    else{
+      var trava = 'FALSE'
+      Logger.log('achei o diferente ele esta na linha '+i)
+      
+      # var k é responsavel por trocar a coluna usando como indice o array da aba que fornece as informações     
+      var k = 0;
+      
+      #var j é responsavel por trocar a linha em que as informações vão entrar o valor dela começa na linha em que entrara a primeira informação
+      #segue se somando segui-se somando a depender a situação e da logica
+      var j = 2;
+      
+      #loop para passar as info de uma aba para a outra
+      for(h = 1; h <= 8 ; h++){
+        
+        #array que controla as abas que fornecem e recebem as infos
+        var array = ['B','C','D','E','F','G','H','I'];
+        
+        #comando para alterar o valor de uma célula conforme pega como base outra célula
+        spreadsheet.getRange('Jean Semana!'+array[l]+j).setValue(spreadsheet.getRange('Jean Mês!'+array[k]+i).getValue());
+        j++
+        
+        #mesmo comando que o de cima, mas por conta da infomrção ser composta(uma tabela ao invez de uma tupla) tive que criar um comando a mais para seguir a logica
+        spreadsheet.getRange('Jean Semana!'+array[l]+j).setValue(spreadsheet.getRange('Jean Mês!'+array[k]+(i+1)).getValue());
+        Logger.log(array[k]+(i+1))
+        j++
+        k++ 
+      }
+      l++
+      m++
+      
+      #verificação para mudar a trava e encerrar o loop depois de executado 7 vezes
+      if(m > 7){
+        Logger.log(m)
+        var trava = 'TRUE'
+      }
+    }
+  }
+}
